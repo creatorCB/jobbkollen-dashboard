@@ -1,54 +1,25 @@
-"use client";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppShell } from "@/components/dashboard/AppShell";
-import { Chart, useChartOptions } from "@/components/dashboard/Charts";
-import { RefreshToolbar } from "@/components/dashboard/RefreshToolbar";
-import { FilterChips } from "@/components/dashboard/FilterChips";
-import { SimpleTable } from "@/components/dashboard/SimpleTable";
-import { useMetrics } from "@/lib/useMetrics";
+import { BarPageClient } from "@/components/dashboard/BarPageClient";
+import { PageToolbar } from "@/components/dashboard/PageToolbar";
+import { getMetrics } from "@/lib/metrics";
 
-export default function RegionsPage() {
-  const { data, error, loading, lastUpdated, refresh } = useMetrics();
-  const charts = useChartOptions(data);
+export const revalidate = 60;
+
+export default async function RegionsPage() {
+  const data = await getMetrics();
 
   return (
     <AppShell
       title="Regions"
       subtitle="Top regions by job postings (last 90 days)"
       toolbar={
-        <>
-          <FilterChips />
-          <RefreshToolbar
-            lastUpdated={lastUpdated}
-            loading={loading}
-            onRefresh={refresh}
-          />
-        </>
+        <PageToolbar
+          updatedAt={new Date()}
+          chips={["Last 90 days", "Regions", "Supabase source", "Public"]}
+        />
       }
     >
-      {error && (
-        <div className="mb-6 rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive">
-          {error}
-        </div>
-      )}
-
-      {!data && loading && <div className="h-[420px] animate-pulse rounded-xl border bg-card" />}
-
-      {data && charts && (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle>Top regions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Chart option={charts.barRegions} height={520} />
-            </CardContent>
-          </Card>
-
-          <SimpleTable title="Top regions" rows={data.regions} valueLabel="Jobs" limit={20} />
-        </div>
-      )}
+      <BarPageClient data={data} kind="regions" title="Top regions" />
     </AppShell>
   );
 }
