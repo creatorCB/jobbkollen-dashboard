@@ -21,6 +21,8 @@ async function fetchAll<T>(table: string, select: string, filter: { col: string;
   return all;
 }
 
+export const revalidate = 60;
+
 export async function GET() {
   try {
     const since = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
@@ -96,7 +98,7 @@ export async function GET() {
       return limit ? arr.slice(0, limit) : arr;
     };
 
-    return NextResponse.json({
+    const res = NextResponse.json({
       totals: {
         jobs90d: jobsFact.length,
         employers: topEmployers.size,
@@ -111,6 +113,14 @@ export async function GET() {
       weekday: Array.from(weekday.entries()),
       positionsBucket: toSortedArray(positionsBucket),
     });
+
+    // Public dashboard: cache to protect Supabase + make UI snappy.
+    // Vercel/Next will also honor revalidate above.
+    res.headers.set(
+      "Cache-Control",
+      "public, s-maxage=60, stale-while-revalidate=300"
+    );
+    return res;
   } catch (e: any) {
     return NextResponse.json({ error: e.message || "Unknown error" }, { status: 500 });
   }

@@ -11,7 +11,7 @@ export function RefreshToolbar({
 }: {
   lastUpdated: Date | null;
   loading: boolean;
-  onRefresh: () => void;
+  onRefresh: (opts?: { force?: boolean }) => void;
 }) {
   return (
     <div className="flex items-center gap-3">
@@ -30,7 +30,7 @@ export function RefreshToolbar({
       <Button
         variant="outline"
         size="sm"
-        onClick={onRefresh}
+        onClick={() => onRefresh({ force: true })}
         disabled={loading}
       >
         <RefreshCw className={"h-4 w-4" + (loading ? " animate-spin" : "")} />

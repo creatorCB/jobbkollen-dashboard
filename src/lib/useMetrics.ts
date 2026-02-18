@@ -20,11 +20,13 @@ export function useMetrics() {
   const [loading, setLoading] = useState<boolean>(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (opts?: { force?: boolean }) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/metrics", { cache: "no-store" });
+      // default: allow caching. force refresh adds a cache-busting param.
+      const url = opts?.force ? `/api/metrics?t=${Date.now()}` : "/api/metrics";
+      const res = await fetch(url);
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Failed to load");
       setData(json);
