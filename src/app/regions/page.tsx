@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppShell } from "@/components/dashboard/AppShell";
 import { Chart, useChartOptions } from "@/components/dashboard/Charts";
 import { RefreshToolbar } from "@/components/dashboard/RefreshToolbar";
+import { FilterChips } from "@/components/dashboard/FilterChips";
+import { SimpleTable } from "@/components/dashboard/SimpleTable";
 import { useMetrics } from "@/lib/useMetrics";
 
 export default function RegionsPage() {
@@ -15,11 +17,14 @@ export default function RegionsPage() {
       title="Regions"
       subtitle="Top regions by job postings (last 90 days)"
       toolbar={
-        <RefreshToolbar
-          lastUpdated={lastUpdated}
-          loading={loading}
-          onRefresh={refresh}
-        />
+        <>
+          <FilterChips />
+          <RefreshToolbar
+            lastUpdated={lastUpdated}
+            loading={loading}
+            onRefresh={refresh}
+          />
+        </>
       }
     >
       {error && (
@@ -31,14 +36,18 @@ export default function RegionsPage() {
       {!data && loading && <div className="h-[420px] animate-pulse rounded-xl border bg-card" />}
 
       {data && charts && (
-        <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle>Top regions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Chart option={charts.barRegions} height={520} />
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Top regions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Chart option={charts.barRegions} height={520} />
+            </CardContent>
+          </Card>
+
+          <SimpleTable title="Top regions" rows={data.regions} valueLabel="Jobs" limit={20} />
+        </div>
       )}
     </AppShell>
   );

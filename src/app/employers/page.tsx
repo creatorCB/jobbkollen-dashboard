@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMetrics } from "@/lib/useMetrics";
 import { AppShell } from "@/components/dashboard/AppShell";
 import { RefreshToolbar } from "@/components/dashboard/RefreshToolbar";
+import { FilterChips } from "@/components/dashboard/FilterChips";
+import { SimpleTable } from "@/components/dashboard/SimpleTable";
 import { Chart, useChartOptions } from "@/components/dashboard/Charts";
 
 export default function EmployersPage() {
@@ -15,11 +17,14 @@ export default function EmployersPage() {
       title="Employers"
       subtitle="Top employers by job postings (last 90 days)"
       toolbar={
-        <RefreshToolbar
-          lastUpdated={lastUpdated}
-          loading={loading}
-          onRefresh={refresh}
-        />
+        <>
+          <FilterChips />
+          <RefreshToolbar
+            lastUpdated={lastUpdated}
+            loading={loading}
+            onRefresh={refresh}
+          />
+        </>
       }
     >
       {error && (
@@ -31,14 +36,18 @@ export default function EmployersPage() {
       {!data && loading && <div className="h-[420px] animate-pulse rounded-xl border bg-card" />}
 
       {data && charts && (
-        <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle>Top employers</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Chart option={charts.barEmployers} height={520} />
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Top employers</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Chart option={charts.barEmployers} height={520} />
+            </CardContent>
+          </Card>
+
+          <SimpleTable title="Top employers" rows={data.topEmployers} valueLabel="Jobs" limit={20} />
+        </div>
       )}
     </AppShell>
   );

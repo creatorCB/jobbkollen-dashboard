@@ -79,7 +79,7 @@ export function AppShell({
 
         <section>
           <header className="mb-6 rounded-xl border bg-gradient-to-b from-muted/50 to-background p-6 shadow-sm">
-            <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
                 {subtitle && (

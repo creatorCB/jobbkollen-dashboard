@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { AppShell } from "@/components/dashboard/AppShell";
 import { RefreshToolbar } from "@/components/dashboard/RefreshToolbar";
+import { FilterChips } from "@/components/dashboard/FilterChips";
+import { SimpleTable } from "@/components/dashboard/SimpleTable";
 import { Chart, useChartOptions } from "@/components/dashboard/Charts";
 import { useMetrics } from "@/lib/useMetrics";
 
@@ -29,11 +31,14 @@ export default function Home() {
       title="Overview"
       subtitle="Last 90 days · Data/IT occupation areas"
       toolbar={
-        <RefreshToolbar
-          lastUpdated={lastUpdated}
-          loading={loading}
-          onRefresh={refresh}
-        />
+        <>
+          <FilterChips />
+          <RefreshToolbar
+            lastUpdated={lastUpdated}
+            loading={loading}
+            onRefresh={refresh}
+          />
+        </>
       }
     >
       {error && (
@@ -118,6 +123,16 @@ export default function Home() {
                 <Chart option={charts.barOccupations} height={360} />
               </CardContent>
             </Card>
+          </div>
+
+          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <SimpleTable title="Top employers" rows={data.topEmployers} valueLabel="Jobs" />
+            <SimpleTable title="Top occupations" rows={data.topOccupations} valueLabel="Jobs" />
+          </div>
+
+          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <SimpleTable title="Top regions" rows={data.regions} valueLabel="Jobs" />
+            <SimpleTable title="Occupation areas" rows={data.areas} valueLabel="Jobs" limit={21} />
           </div>
         </>
       )}
