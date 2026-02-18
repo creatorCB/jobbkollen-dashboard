@@ -28,7 +28,7 @@ export async function GET() {
     const [jobsFact, rawJobs, areas] = await Promise.all([
       fetchAll<any>(
         "v_jobs_fact",
-        "published_at,company_name,workplace_name,employment_type,region_name,occupation_label,positions",
+        "published_at,company_name,workplace_name,employment_type,region_name,occupation_label_search,positions",
         { col: "published_at", op: "gte", val: since }
       ),
       fetchAll<any>(
@@ -66,7 +66,7 @@ export async function GET() {
       const region = (j.region_name || "Unknown").trim();
       regions.set(region, (regions.get(region) || 0) + 1);
 
-      const occ = (j.occupation_label || "Unknown").trim();
+      const occ = (j.occupation_label_search || "Unknown").trim();
       topOccupations.set(occ, (topOccupations.get(occ) || 0) + 1);
 
       const wd = new Date(j.published_at).toLocaleDateString("en-US", { weekday: "short" });
